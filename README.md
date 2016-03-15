@@ -55,13 +55,13 @@ $ docker run -e CONCURRENCY=8 -e REQUESTS=20000 --net=host inference_client
 If you have `Go` installed on your host, you can also benchmark the server with a client outside of a Docker container:
 ```
 $ go get github.com/flx42/boom
-$ boom -readall -n 200000 -m POST -d @images/2.jpg http://127.0.0.1:8000/api/classify
+$ boom -n 200000 -m POST -d @images/2.jpg http://127.0.0.1:8000/api/classify
 ```
 
 ## Performance on a NVIDIA DIGITS DevBox
 This machine has 4 GeForce GTX Titan X GPUs:
 ```
-$ boom -readall -c 8 -n 200000 -m POST -d @images/2.jpg http://127.0.0.1:8000/api/classify
+$ boom -c 8 -n 200000 -m POST -d @images/2.jpg http://127.0.0.1:8000/api/classify
 Summary:
   Total:        126.5910 secs.
   Slowest:      0.0384 secs.
