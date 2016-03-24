@@ -6,4 +6,4 @@ RUN go get github.com/flx42/boom
 
 COPY images /images
 
-CMD boom -readall -c ${CONCURRENCY} -n ${REQUESTS} -m POST -d @/images/2.jpg http://localhost:8000/api/classify
+CMD boom -c ${CONCURRENCY} -n ${REQUESTS} -m POST -d @/images/2.jpg http://localhost:8000/api/classify
