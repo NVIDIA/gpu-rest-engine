@@ -77,6 +77,26 @@ As a comparison, Caffe in standalone mode achieves 405 images / second on a sing
 
 This inference server is aimed for low-latency applications, to achieve higher throughput we would need to batch multiple incoming client requests, or have clients send multiple images to classify. Batching can be added easily when using the [C++ API](https://github.com/flx42/caffe/commit/be0bff1a84c9e16fb8e8514dc559f2de5ab1a416) of Caffe.
 
+## Benchmarking overhead of CUDA kernel calls
+Similarly to the inference server, a simple server code is provided for estimating the overhead of using CUDA kernels in your code. The server will simply call an empty CUDA kernel before responding `200` to the client. The server can be built using the same commands as above:
+```
+$ docker build -t benchmark_server -f Dockerfile.benchmark_server .
+$ nvidia-docker run --name=server --net=host --rm benchmark_server
+```
+And for the client:
+```
+$ docker build -t benchmark_client -f Dockerfile.benchmark_client .
+$ docker run -e CONCURRENCY=8 -e REQUESTS=200000 --net=host benchmark_client
+[...]
+Summary:
+  Total:        5.8071 secs
+  Slowest:      0.0127 secs
+  Fastest:      0.0001 secs
+  Average:      0.0002 secs
+  Requests/sec: 34440.3083   
+```
+
+
 ## Contributing
 
 Feel free to report issues during build or execution. We also welcome suggestions to improve the performance of this application.
