@@ -1,0 +1,7 @@
+FROM golang:1.6
+
+MAINTAINER Felix Abecassis "fabecassis@nvidia.com"
+
+RUN go get github.com/flx42/boom
+
+CMD boom -c ${CONCURRENCY} -n ${REQUESTS} http://localhost:8000/benchmark
