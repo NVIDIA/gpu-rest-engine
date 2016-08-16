@@ -63,17 +63,17 @@ This machine has 4 GeForce GTX Titan X GPUs:
 ```
 $ boom -c 8 -n 200000 -m POST -d @images/2.jpg http://127.0.0.1:8000/api/classify
 Summary:
-  Total:        126.5910 secs.
-  Slowest:      0.0384 secs.
-  Fastest:      0.0033 secs.
-  Average:      0.0051 secs.
-  Requests/sec: 1579.8914
-  Total Data Received:  68800000 bytes.
-  Response Size per Request:    344 bytes.
+  Total:        100.7775 secs
+  Slowest:      0.0167 secs
+  Fastest:      0.0028 secs
+  Average:      0.0040 secs
+  Requests/sec: 1984.5690
+  Total data:   68800000 bytes
+  Size/request: 344 bytes
 [...]
 ```
 
-As a comparison, Caffe in standalone mode achieves 405 images / second on a single Titan X for inference (`batch=1`). This shows that our code achieves optimal GPU utilization and good multi-GPU scaling, even when adding a REST API on top. A discussion of GPU performance for inference at different batch sizes can be found in our [GPU-Based Deep Learning Inference whitepaper](https://www.nvidia.com/content/tegra/embedded-systems/pdf/jetson_tx1_whitepaper.pdf).
+As a comparison, Caffe in standalone mode achieves approximately 500 images / second on a single Titan X for inference (`batch=1`). This shows that our code achieves optimal GPU utilization and good multi-GPU scaling, even when adding a REST API on top. A discussion of GPU performance for inference at different batch sizes can be found in our [GPU-Based Deep Learning Inference whitepaper](https://www.nvidia.com/content/tegra/embedded-systems/pdf/jetson_tx1_whitepaper.pdf).
 
 This inference server is aimed for low-latency applications, to achieve higher throughput we would need to batch multiple incoming client requests, or have clients send multiple images to classify. Batching can be added easily when using the [C++ API](https://github.com/flx42/caffe/commit/be0bff1a84c9e16fb8e8514dc559f2de5ab1a416) of Caffe.
 
