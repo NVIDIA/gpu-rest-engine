@@ -8,7 +8,7 @@
 using GpuMat = cv::cuda::GpuMat;
 using namespace cv;
 
-/* A simple slab-allocator class to allocate storage for cv::GpuMat objects.
+/* A simple linear allocator class to allocate storage for cv::GpuMat objects.
    This feature was added in OpenCV 3.0. */
 class GPUAllocator : public GpuMat::Allocator
 {
@@ -25,7 +25,7 @@ public: /* GpuMat::Allocator interface */
     void free(GpuMat* mat);
 
 private:
-    cudaError_t slabAllocate(void** dev_ptr, size_t size);
+    cudaError_t grow(void** dev_ptr, size_t size);
 
 private:
     void* base_ptr_;

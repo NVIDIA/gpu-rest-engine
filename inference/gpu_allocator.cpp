@@ -28,14 +28,14 @@ static int align_up(unsigned int v, unsigned int alignment)
     return ((v + alignment - 1) / alignment) * alignment;
 }
 
-cudaError_t GPUAllocator::slabAllocate(void** dev_ptr, size_t size)
+cudaError_t GPUAllocator::grow(void** dev_ptr, size_t size)
 {
     if (current_size_ + size >= total_size_)
 	return cudaErrorMemoryAllocation;
 
     *dev_ptr = current_ptr_;
     size_t aligned_size = align_up(size, ALIGNMENT);
-    current_ptr_ = (uint8_t*)current_ptr_ + aligned_size;
+    current_ptr_ = (char*)current_ptr_ + aligned_size;
     current_size_ += aligned_size;
 
     return cudaSuccess;
@@ -53,7 +53,7 @@ bool GPUAllocator::allocate(cv::cuda::GpuMat* mat, int rows, int cols, size_t el
     int padded_height = align_up(rows, 16);
     int total_size = elemSize * padded_width * padded_height;
 
-    cudaError_t status = slabAllocate((void**)&mat->data, total_size);
+    cudaError_t status = grow((void**)&mat->data, total_size);
     if (status != cudaSuccess)
         return false;
 
