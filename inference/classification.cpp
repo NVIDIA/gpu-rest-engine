@@ -115,6 +115,7 @@ std::vector<Prediction> Classifier::Classify(const Mat& img, int N)
 {
     std::vector<float> output = Predict(img);
 
+    N = std::min<int>(labels_.size(), N);
     std::vector<int> maxN = Argmax(output, N);
     std::vector<Prediction> predictions;
     for (int i = 0; i < N; ++i)
