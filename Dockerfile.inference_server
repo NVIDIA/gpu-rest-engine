@@ -6,7 +6,7 @@ ENV CUDA_ARCH_BIN "30 35 50 52 60"
 ENV CUDA_ARCH_PTX "60"
 
 # Install dependencies.
-RUN apt-get update && apt-get install -y --no-install-recommends --force-yes \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         cmake \
         git \
