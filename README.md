@@ -31,10 +31,6 @@ Execute the following command and wait a few seconds for the initialization of t
 ```
 $ nvidia-docker run --name=server --net=host --rm inference_server
 ```
-If you encounter an error when executing the command above, you might need to initialize `nvidia-docker` with the following command:
-```
-$ sudo nvidia-docker volume setup
-```
 You can use the environment variable [`NV_GPU`](https://github.com/NVIDIA/nvidia-docker/wiki/Using-nvidia-docker#gpu-isolation) to isolate GPUs for this container.
 
 ## Single image
