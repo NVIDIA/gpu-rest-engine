@@ -71,7 +71,7 @@ Summary:
 
 As a comparison, Caffe in standalone mode achieves approximately 500 images / second on a single Titan X for inference (`batch=1`). This shows that our code achieves optimal GPU utilization and good multi-GPU scaling, even when adding a REST API on top. A discussion of GPU performance for inference at different batch sizes can be found in our [GPU-Based Deep Learning Inference whitepaper](https://www.nvidia.com/content/tegra/embedded-systems/pdf/jetson_tx1_whitepaper.pdf).
 
-This inference server is aimed for low-latency applications, to achieve higher throughput we would need to batch multiple incoming client requests, or have clients send multiple images to classify. Batching can be added easily when using the [C++ API](https://github.com/flx42/caffe/commit/be0bff1a84c9e16fb8e8514dc559f2de5ab1a416) of Caffe.
+This inference server is aimed for low-latency applications, to achieve higher throughput we would need to batch multiple incoming client requests, or have clients send multiple images to classify. Batching can be added easily when using the [C++ API](https://github.com/flx42/caffe/commit/be0bff1a84c9e16fb8e8514dc559f2de5ab1a416) of Caffe. An example of this strategy can be found in [this article](https://arxiv.org/pdf/1512.02595.pdf) from Baidu Research, they call it "Batch Dispatch".
 
 ## Benchmarking overhead of CUDA kernel calls
 Similarly to the inference server, a simple server code is provided for estimating the overhead of using CUDA kernels in your code. The server will simply call an empty CUDA kernel before responding `200` to the client. The server can be built using the same commands as above:
