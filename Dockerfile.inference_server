@@ -1,4 +1,4 @@
-FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
+FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
 
 MAINTAINER Felix Abecassis "fabecassis@nvidia.com"
 
@@ -20,11 +20,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         pkg-config \
         protobuf-compiler \
         python-yaml \
+        python-six \
         wget && \
     rm -rf /var/lib/apt/lists/*
 
-# OpenCV 3.0.0 is needed to support custom allocators for GpuMat objects.
-RUN git clone --depth 1 -b 3.0.0 https://github.com/Itseez/opencv.git /opencv && \
+# OpenCV 3.2.0 is needed to support custom allocators for GpuMat objects.
+RUN git clone --depth 1 -b 3.2.0 https://github.com/Itseez/opencv.git /opencv && \
     cd /opencv && \
     cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
           -DWITH_CUDA=ON -DCUDA_ARCH_BIN="${CUDA_ARCH_BIN}" -DCUDA_ARCH_PTX="${CUDA_ARCH_PTX}" \
@@ -60,7 +61,7 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf && \
     ldconfig
 
 # Install golang
-ENV GOLANG_VERSION 1.7
+ENV GOLANG_VERSION 1.8.1
 RUN wget -O - https://storage.googleapis.com/golang/go${GOLANG_VERSION}.linux-amd64.tar.gz \
     | tar -v -C /usr/local -xz
 ENV GOPATH /go
