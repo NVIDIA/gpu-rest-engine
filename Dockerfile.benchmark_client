@@ -2,6 +2,6 @@ FROM golang:1.6
 
 MAINTAINER Felix Abecassis "fabecassis@nvidia.com"
 
-RUN go get github.com/flx42/boom
+RUN go get github.com/rakyll/hey
 
-CMD boom -c ${CONCURRENCY} -n ${REQUESTS} http://localhost:8000/benchmark
+CMD hey -c ${CONCURRENCY} -n ${REQUESTS} http://localhost:8000/benchmark

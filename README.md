@@ -34,7 +34,7 @@ $ nvidia-docker run --name=server --net=host --rm inference_server
 You can use the environment variable [`NV_GPU`](https://github.com/NVIDIA/nvidia-docker/wiki/Using-nvidia-docker#gpu-isolation) to isolate GPUs for this container.
 
 ## Single image
-Since we used [`--net=host`](https://docs.docker.com/v1.8/articles/networking/), we can access our inference server from a terminal on the host using `curl`:
+Since we used [`--net=host`](https://docs.docker.com/engine/userguide/networking/), we can access our inference server from a terminal on the host using `curl`:
 ```
 $ curl -XPOST --data-binary @images/1.jpg http://127.0.0.1:8000/api/classify
 [{"confidence":0.9998,"label":"n02328150 Angora, Angora rabbit"},{"confidence":0.0001,"label":"n02325366 wood rabbit, cottontail, cottontail rabbit"},{"confidence":0.0001,"label":"n02326432 hare"},{"confidence":0.0000,"label":"n02085936 Maltese dog, Maltese terrier, Maltese"},{"confidence":0.0000,"label":"n02342885 hamster"}]
@@ -42,7 +42,7 @@ $ curl -XPOST --data-binary @images/1.jpg http://127.0.0.1:8000/api/classify
 
 ## Benchmarking performance
 We can benchmark the performance of our classification server using any tool that can generate HTTP load. We included a Dockerfile
-for a benchmarking client using a modified version of [rakyll/boom](https://github.com/rakyll/boom):
+for a benchmarking client using [rakyll/hey](https://github.com/rakyll/hey):
 ```
 $ docker build -t inference_client -f Dockerfile.inference_client .
 $ docker run -e CONCURRENCY=8 -e REQUESTS=20000 --net=host inference_client
@@ -50,14 +50,14 @@ $ docker run -e CONCURRENCY=8 -e REQUESTS=20000 --net=host inference_client
 
 If you have `Go` installed on your host, you can also benchmark the server with a client outside of a Docker container:
 ```
-$ go get github.com/flx42/boom
-$ boom -n 200000 -m POST -d @images/2.jpg http://127.0.0.1:8000/api/classify
+$ go get github.com/rakyll/hey
+$ hey -n 200000 -m POST -D images/2.jpg http://127.0.0.1:8000/api/classify
 ```
 
 ## Performance on a NVIDIA DIGITS DevBox
 This machine has 4 GeForce GTX Titan X GPUs:
 ```
-$ boom -c 8 -n 200000 -m POST -d @images/2.jpg http://127.0.0.1:8000/api/classify
+$ hey -c 8 -n 200000 -m POST -D images/2.jpg http://127.0.0.1:8000/api/classify
 Summary:
   Total:        100.7775 secs
   Slowest:      0.0167 secs
