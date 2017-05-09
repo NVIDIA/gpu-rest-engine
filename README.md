@@ -6,6 +6,7 @@ This demonstration makes use of several technologies with which you may be famil
 - [Docker](https://www.docker.com/): for bundling all the dependencies of our program and for easier deployment.
 - [Go](https://golang.org/): for its efficient builtin HTTP server.
 - [Caffe](https://github.com/BVLC/caffe): because it has good performance and a simple C++ API.
+- [TensorRT](https://developer.nvidia.com/tensorrt): NVIDIA's high-performance inference engine.
 - [cuDNN](https://developer.nvidia.com/cudnn): for accelerating common deep learning primitives on the GPU.
 - [OpenCV](http://opencv.org/): to have a simple C++ API for GPU image processing.
 
@@ -17,17 +18,23 @@ This demonstration makes use of several technologies with which you may be famil
 - Install the latest version of [Docker](https://docs.docker.com/linux/step_one/).
 - Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker/wiki/Installation#installing-from-binaries), prefer using the deb package if you are on Ubuntu.
 
-## Build command
+## Build command (Caffe)
 The command might take a while to execute:
 ```
 $ docker build -t inference_server -f Dockerfile.caffe_server .
 ```
 To speedup the build you can modify [this line](https://github.com/NVIDIA/gpu-rest-engine/blob/master/Dockerfile.caffe_server#L5) to only build for the GPU architecture that you need.
 
+## Build command (TensorRT)
+This command requires the TensorRT archive to be present in the current folder.
+```
+$ docker build -t inference_server -f Dockerfile.tensorrt_server .
+```
+
 # Testing
 
 ## Starting the server
-Execute the following command and wait a few seconds for the initialization of the Caffe classifiers:
+Execute the following command and wait a few seconds for the initialization of the classifiers:
 ```
 $ nvidia-docker run --name=server --net=host --rm inference_server
 ```

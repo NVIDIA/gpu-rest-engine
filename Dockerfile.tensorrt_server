@@ -1,0 +1,65 @@
+FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
+ENV CUDA_ARCH "30 35 52"
+
+MAINTAINER Felix Abecassis "fabecassis@nvidia.com"
+
+# Install dependencies.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        cmake \
+        git \
+        libboost-all-dev \
+        libgflags-dev \
+        libgoogle-glog-dev \
+        libprotobuf-dev \
+        pkg-config \
+        protobuf-compiler \
+        python-yaml \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install OpenCV 3.2.0 with CUDA support
+RUN git clone --depth 1 -b 3.2.0 https://github.com/Itseez/opencv.git /opencv && \
+    cd /opencv && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
+          -DWITH_CUDA=ON -DCUDA_ARCH_BIN="${CUDA_ARCH}" -DCUDA_ARCH_PTX="${CUDA_ARCH}" \
+          -DWITH_JPEG=ON -DBUILD_JPEG=ON -DWITH_PNG=ON -DBUILD_PNG=ON \
+          -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DWITH_FFMPEG=OFF -DWITH_GTK=OFF \
+          -DWITH_OPENCL=OFF -DWITH_QT=OFF -DWITH_V4L=OFF -DWITH_JASPER=OFF \
+          -DWITH_1394=OFF -DWITH_TIFF=OFF -DWITH_OPENEXR=OFF -DWITH_IPP=OFF -DWITH_WEBP=OFF \
+          -DBUILD_opencv_superres=OFF -DBUILD_opencv_java=OFF -DBUILD_opencv_python2=OFF \
+          -DBUILD_opencv_videostab=OFF -DBUILD_opencv_apps=OFF -DBUILD_opencv_flann=OFF \
+          -DBUILD_opencv_ml=OFF -DBUILD_opencv_photo=OFF -DBUILD_opencv_shape=OFF \
+          -DBUILD_opencv_cudabgsegm=OFF -DBUILD_opencv_cudaoptflow=OFF -DBUILD_opencv_cudalegacy=OFF \
+          -DCUDA_NVCC_FLAGS="--default-stream per-thread -O3" -DCUDA_FAST_MATH=ON && \
+    make -j"$(nproc)" install && ldconfig && \
+    rm -rf /opencv
+
+# Install golang
+ENV GOLANG_VERSION 1.8.1
+RUN wget -O - https://storage.googleapis.com/golang/go${GOLANG_VERSION}.linux-amd64.tar.gz \
+    | tar -v -C /usr/local -xz
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+# Require the TensorRT archive to be present in the build context.
+ADD TensorRT-2.1.0.x86_64.cuda-8.0.tar.bz2 /opt/
+
+ENV CPLUS_INCLUDE_PATH /opt/TensorRT-2.1.0/include:$CPLUS_INCLUDE_PATH
+ENV LD_LIBRARY_PATH /opt/TensorRT-2.1.0/targets/x86_64-linux-gnu/lib:$LD_LIBRARY_PATH
+ENV LIBRARY_PATH /opt/TensorRT-2.1.0/targets/x86_64-linux-gnu/lib:$LIBRARY_PATH
+
+# Copy and build GPU Rest Engine with TensorRT
+COPY tensorrt /go/src/tensorrt-server
+COPY common.h /go/src/common.h
+RUN go get -ldflags="-s" tensorrt-server
+
+# Download model
+RUN git clone --depth 1 https://github.com/NVIDIA/caffe.git /caffe && \
+    /caffe/scripts/download_model_binary.py /caffe/models/bvlc_alexnet && \
+    /caffe/data/ilsvrc12/get_ilsvrc_aux.sh
+
+CMD ["tensorrt-server", "/caffe/models/bvlc_alexnet/deploy.prototxt", \
+     "/caffe/models/bvlc_alexnet/bvlc_alexnet.caffemodel", \
+     "/caffe/data/ilsvrc12/imagenet_mean.binaryproto", \
+     "/caffe/data/ilsvrc12/synset_words.txt"]
