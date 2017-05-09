@@ -252,10 +252,10 @@ void Classifier::Preprocess(const Mat& host_img,
  * execution context from a queue of available GPU contexts and then do a
  * cudaSetDevice() to prepare for execution. Multiple contexts can be allocated
  * per GPU. */
-class CaffeContext
+class ExecContext
 {
 public:
-    friend ScopedContext<CaffeContext>;
+    friend ScopedContext<ExecContext>;
 
     static bool IsCompatible(int device)
     {
@@ -270,7 +270,7 @@ public:
         return true;
     }
 
-    CaffeContext(const string& model_file,
+    ExecContext(const string& model_file,
                  const string& trained_file,
                  const string& mean_file,
                  const string& label_file,
@@ -319,7 +319,7 @@ private:
 
 struct classifier_ctx
 {
-    ContextPool<CaffeContext> pool;
+    ContextPool<ExecContext> pool;
 };
 
 /* Currently, 2 execution contexts are created per GPU. In other words, 2
@@ -340,10 +340,10 @@ classifier_ctx* classifier_initialize(char* model_file, char* trained_file,
         if (st != cudaSuccess)
             throw std::invalid_argument("could not list CUDA devices");
 
-        ContextPool<CaffeContext> pool;
+        ContextPool<ExecContext> pool;
         for (int dev = 0; dev < device_count; ++dev)
         {
-            if (!CaffeContext::IsCompatible(dev))
+            if (!ExecContext::IsCompatible(dev))
             {
                 LOG(ERROR) << "Skipping device: " << dev;
                 continue;
@@ -351,7 +351,7 @@ classifier_ctx* classifier_initialize(char* model_file, char* trained_file,
 
             for (int i = 0; i < kContextsPerDevice; ++i)
             {
-                std::unique_ptr<CaffeContext> context(new CaffeContext(model_file, trained_file,
+                std::unique_ptr<ExecContext> context(new ExecContext(model_file, trained_file,
                                                                        mean_file, label_file, dev));
                 pool.Push(std::move(context));
             }
@@ -386,10 +386,10 @@ const char* classifier_classify(classifier_ctx* ctx,
 
         std::vector<Prediction> predictions;
         {
-            /* In this scope a Caffe context is acquired for inference and it
+            /* In this scope an execution context is acquired for inference and it
              * will be automatically released back to the context pool when
              * exiting this scope. */
-            ScopedContext<CaffeContext> context(ctx->pool);
+            ScopedContext<ExecContext> context(ctx->pool);
             auto classifier = context->CaffeClassifier();
             predictions = classifier->Classify(img);
         }
