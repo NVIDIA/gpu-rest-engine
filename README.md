@@ -20,9 +20,9 @@ This demonstration makes use of several technologies with which you may be famil
 ## Build command
 The command might take a while to execute:
 ```
-$ docker build -t inference_server -f Dockerfile.inference_server .
+$ docker build -t inference_server -f Dockerfile.caffe_server .
 ```
-To speedup the build you can modify [this line](https://github.com/NVIDIA/gpu-rest-engine/blob/master/Dockerfile.inference_server#L5) to only build for the GPU architecture that you need.
+To speedup the build you can modify [this line](https://github.com/NVIDIA/gpu-rest-engine/blob/master/Dockerfile.caffe_server#L5) to only build for the GPU architecture that you need.
 
 # Testing
 

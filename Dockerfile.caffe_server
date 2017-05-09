@@ -68,11 +68,11 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 # Build inference server
-COPY inference /go/src/inference
+COPY caffe /go/src/caffe-server
 COPY common.h /go/src/common.h
-RUN go get -ldflags="-s" inference
+RUN go get -ldflags="-s" caffe-server
 
-CMD ["inference", \
+CMD ["caffe-server", \
      "/caffe/models/bvlc_reference_caffenet/deploy.prototxt", \
      "/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel", \
      "/caffe/data/ilsvrc12/imagenet_mean.binaryproto", \
