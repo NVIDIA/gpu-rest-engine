@@ -43,11 +43,11 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 # Require the TensorRT archive to be present in the build context.
-ADD TensorRT-2.1.0.x86_64.cuda-8.0.tar.bz2 /opt/
+ADD TensorRT-2.1.2.x86_64.cuda-8.0-16-04.tar.bz2 /opt/
 
-ENV CPLUS_INCLUDE_PATH /opt/TensorRT-2.1.0/include:$CPLUS_INCLUDE_PATH
-ENV LD_LIBRARY_PATH /opt/TensorRT-2.1.0/targets/x86_64-linux-gnu/lib:$LD_LIBRARY_PATH
-ENV LIBRARY_PATH /opt/TensorRT-2.1.0/targets/x86_64-linux-gnu/lib:$LIBRARY_PATH
+ENV CPLUS_INCLUDE_PATH /opt/TensorRT-2.1.2/include:$CPLUS_INCLUDE_PATH
+ENV LD_LIBRARY_PATH /opt/TensorRT-2.1.2/targets/x86_64-linux-gnu/lib:$LD_LIBRARY_PATH
+ENV LIBRARY_PATH /opt/TensorRT-2.1.2/targets/x86_64-linux-gnu/lib:$LIBRARY_PATH
 
 # Copy and build GPU Rest Engine with TensorRT
 COPY tensorrt /go/src/tensorrt-server
@@ -55,7 +55,7 @@ COPY common.h /go/src/common.h
 RUN go get -ldflags="-s" tensorrt-server
 
 # Download model
-RUN git clone --depth 1 https://github.com/NVIDIA/caffe.git /caffe && \
+RUN git clone -b caffe-0.15 --depth 1 https://github.com/NVIDIA/caffe.git /caffe && \
     /caffe/scripts/download_model_binary.py /caffe/models/bvlc_alexnet && \
     /caffe/data/ilsvrc12/get_ilsvrc_aux.sh
 
