@@ -38,7 +38,7 @@ Execute the following command and wait a few seconds for the initialization of t
 ```
 $ nvidia-docker run --name=server --net=host --rm inference_server
 ```
-You can use the environment variable [`NV_GPU`](https://github.com/NVIDIA/nvidia-docker/wiki/Using-nvidia-docker#gpu-isolation) to isolate GPUs for this container.
+You can use the environment variable [`NV_GPU`](https://github.com/NVIDIA/nvidia-docker/wiki/GPU-isolation) to isolate GPUs for this container.
 
 ## Single image
 Since we used [`--net=host`](https://docs.docker.com/engine/userguide/networking/), we can access our inference server from a terminal on the host using `curl`:
