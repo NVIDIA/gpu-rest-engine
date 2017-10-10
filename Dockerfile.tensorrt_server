@@ -31,7 +31,7 @@ RUN git clone --depth 1 -b 3.2.0 https://github.com/Itseez/opencv.git /opencv &&
           -DBUILD_opencv_videostab=OFF -DBUILD_opencv_apps=OFF -DBUILD_opencv_flann=OFF \
           -DBUILD_opencv_ml=OFF -DBUILD_opencv_photo=OFF -DBUILD_opencv_shape=OFF \
           -DBUILD_opencv_cudabgsegm=OFF -DBUILD_opencv_cudaoptflow=OFF -DBUILD_opencv_cudalegacy=OFF \
-          -DCUDA_NVCC_FLAGS="--default-stream per-thread -O3" -DCUDA_FAST_MATH=ON && \
+          -DCUDA_NVCC_FLAGS="-O3" -DCUDA_FAST_MATH=ON && \
     make -j"$(nproc)" install && ldconfig && \
     rm -rf /opencv
 
