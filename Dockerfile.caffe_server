@@ -1,6 +1,4 @@
-FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
-
-MAINTAINER Felix Abecassis "fabecassis@nvidia.com"
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04 as build
 
 ENV CUDA_ARCH_BIN "35 52 60 61 70"
 ENV CUDA_ARCH_PTX "70"
@@ -71,8 +69,35 @@ COPY caffe /go/src/caffe-server
 COPY common.h /go/src/common.h
 RUN go get -ldflags="-s -w" caffe-server
 
-CMD ["caffe-server", \
-     "/caffe/models/bvlc_reference_caffenet/deploy.prototxt", \
-     "/caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel", \
-     "/caffe/data/ilsvrc12/imagenet_mean.binaryproto", \
-     "/caffe/data/ilsvrc12/synset_words.txt"]
+
+# We use a multi-stage build to get a smaller image for deployment.
+FROM nvidia/cuda:9.0-base-ubuntu16.04
+
+MAINTAINER Felix Abecassis "fabecassis@nvidia.com"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libatlas3-base \
+        libboost-system1.58.0 \
+        libboost-thread1.58.0 \
+        libgflags2v5 \
+        libgoogle-glog0v5 \
+        libhdf5-10 \
+        libprotobuf9v5 \
+        libcudnn7 \
+        cuda-cublas-9-0 \
+        cuda-curand-9-0 \
+        cuda-npp-9-0 && \
+    rm -rf /var/lib/apt/lists/
+
+# Copy binary and dependencies
+COPY --from=build /go/bin/caffe-server /usr/local/bin/caffe-server
+COPY --from=build /usr/local/lib /usr/local/lib
+
+# Copy dataset. If you use your own dataset: delete these lines and mount a volume from the host.
+COPY --from=build /caffe/models/bvlc_reference_caffenet/deploy.prototxt /opt/caffenet/deploy.prototxt
+COPY --from=build /caffe/models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel /opt/caffenet/bvlc_reference_caffenet.caffemodel
+COPY --from=build /caffe/data/ilsvrc12/imagenet_mean.binaryproto /opt/caffenet/imagenet_mean.binaryproto
+COPY --from=build /caffe/data/ilsvrc12/synset_words.txt /opt/caffenet/synset_words.txt
+
+WORKDIR /opt/caffenet
+CMD ["caffe-server", "deploy.prototxt", "bvlc_reference_caffenet.caffemodel", "imagenet_mean.binaryproto", "synset_words.txt"]
