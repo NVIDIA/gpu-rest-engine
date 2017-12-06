@@ -24,8 +24,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         wget && \
     rm -rf /var/lib/apt/lists/*
 
-# OpenCV 3.2.0 is needed to support custom allocators for GpuMat objects.
-RUN git clone --depth 1 -b 3.2.0 https://github.com/Itseez/opencv.git /opencv && \
+# OpenCV 3.3.1 is needed to support custom allocators for GpuMat objects.
+RUN git clone --depth 1 -b 3.3.1 https://github.com/opencv/opencv.git /opencv && \
     mkdir /opencv/build && cd /opencv/build && \
     cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
           -DWITH_CUDA=ON -DCUDA_ARCH_BIN="${CUDA_ARCH_BIN}" -DCUDA_ARCH_PTX="${CUDA_ARCH_PTX}" \
