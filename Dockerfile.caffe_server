@@ -39,6 +39,7 @@ RUN git clone --depth 1 -b 3.3.1 https://github.com/opencv/opencv.git /opencv &&
           -DBUILD_opencv_cudabgsegm=OFF -DBUILD_opencv_cudaoptflow=OFF -DBUILD_opencv_cudalegacy=OFF \
           -DCUDA_NVCC_FLAGS="-O3" -DCUDA_FAST_MATH=ON .. && \
     make -j"$(nproc)" install && \
+    ldconfig && \
     rm -rf /opencv
 
 # A modified version of Caffe is used to properly handle multithreading and CUDA streams.
@@ -51,14 +52,12 @@ RUN git clone --depth 1 -b bvlc_inference https://github.com/flx42/caffe.git /ca
           -DCMAKE_INSTALL_PREFIX=/usr/local \
           -DCUDA_NVCC_FLAGS="-O3" && \
     make -j"$(nproc)" install && \
+    ldconfig && \
     make clean
 
 # Download Caffenet
 RUN /caffe/scripts/download_model_binary.py /caffe/models/bvlc_reference_caffenet && \
     /caffe/data/ilsvrc12/get_ilsvrc_aux.sh
-
-RUN echo "/usr/local/lib" >> /etc/ld.so.conf && \
-    ldconfig
 
 # Install golang
 ENV GOLANG_VERSION 1.9.2
