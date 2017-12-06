@@ -62,8 +62,8 @@ RUN echo "/usr/local/lib" >> /etc/ld.so.conf && \
 
 # Install golang
 ENV GOLANG_VERSION 1.8.1
-RUN wget -O - https://storage.googleapis.com/golang/go${GOLANG_VERSION}.linux-amd64.tar.gz \
-    | tar -v -C /usr/local -xz
+RUN wget -nv -O - https://storage.googleapis.com/golang/go${GOLANG_VERSION}.linux-amd64.tar.gz \
+    | tar -C /usr/local -xz
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
