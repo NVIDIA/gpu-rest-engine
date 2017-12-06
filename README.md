@@ -16,7 +16,7 @@ This demonstration makes use of several technologies with which you may be famil
 - A Kepler or Maxwell NVIDIA GPU with at least 2 GB of memory.
 - A Linux system with recent NVIDIA drivers (recommended: 352.79).
 - Install the latest version of [Docker](https://docs.docker.com/linux/step_one/).
-- Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker/wiki/Installation#installing-from-binaries), prefer using the deb package if you are on Ubuntu.
+- Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)).
 
 ## Build command (Caffe)
 The command might take a while to execute:
@@ -36,9 +36,9 @@ $ docker build -t inference_server -f Dockerfile.tensorrt_server .
 ## Starting the server
 Execute the following command and wait a few seconds for the initialization of the classifiers:
 ```
-$ nvidia-docker run --name=server --net=host --rm inference_server
+$ docker run --runtime=nvidia --name=server --net=host --rm inference_server
 ```
-You can use the environment variable [`NV_GPU`](https://github.com/NVIDIA/nvidia-docker/wiki/GPU-isolation) to isolate GPUs for this container.
+You can use the environment variable [`NVIDIA_VISIBLE_DEVICES`](https://github.com/NVIDIA/nvidia-docker/wiki/Usage#gpu-isolation) to isolate GPUs for this container.
 
 ## Single image
 Since we used [`--net=host`](https://docs.docker.com/engine/userguide/networking/), we can access our inference server from a terminal on the host using `curl`:
@@ -84,7 +84,7 @@ This inference server is aimed for low-latency applications, to achieve higher t
 Similarly to the inference server, a simple server code is provided for estimating the overhead of using CUDA kernels in your code. The server will simply call an empty CUDA kernel before responding `200` to the client. The server can be built using the same commands as above:
 ```
 $ docker build -t benchmark_server -f Dockerfile.benchmark_server .
-$ nvidia-docker run --name=server --net=host --rm benchmark_server
+$ docker run --runtime=nvidia --name=server --net=host --rm benchmark_server
 ```
 And for the client:
 ```
