@@ -69,7 +69,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 # Build inference server
 COPY caffe /go/src/caffe-server
 COPY common.h /go/src/common.h
-RUN go get -ldflags="-s" caffe-server
+RUN go get -ldflags="-s -w" caffe-server
 
 CMD ["caffe-server", \
      "/caffe/models/bvlc_reference_caffenet/deploy.prototxt", \
