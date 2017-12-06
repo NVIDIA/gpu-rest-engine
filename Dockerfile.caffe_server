@@ -2,8 +2,8 @@ FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 MAINTAINER Felix Abecassis "fabecassis@nvidia.com"
 
-ENV CUDA_ARCH_BIN "30 35 50 52 60"
-ENV CUDA_ARCH_PTX "60"
+ENV CUDA_ARCH_BIN "35 52 60 61 70"
+ENV CUDA_ARCH_PTX "70"
 
 # Install dependencies.
 RUN apt-get update && apt-get install -y --no-install-recommends \
