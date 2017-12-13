@@ -83,7 +83,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libgoogle-glog0v5 \
         libhdf5-10 \
         libprotobuf9v5 \
-        libcudnn7 \
+        libcudnn7=7.0.5.15-1+cuda9.0 \
         cuda-cublas-9-0 \
         cuda-curand-9-0 \
         cuda-npp-9-0 && \
