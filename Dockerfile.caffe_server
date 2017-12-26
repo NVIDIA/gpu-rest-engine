@@ -92,6 +92,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy binary and dependencies
 COPY --from=build /go/bin/caffe-server /usr/local/bin/caffe-server
 COPY --from=build /usr/local/lib /usr/local/lib
+RUN ldconfig
 
 # Copy dataset. If you use your own dataset: delete these lines and mount a volume from the host.
 COPY --from=build /caffe/models/bvlc_reference_caffenet/deploy.prototxt /opt/caffenet/deploy.prototxt
