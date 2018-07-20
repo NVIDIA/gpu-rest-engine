@@ -2,6 +2,8 @@
 
 This repository shows how to implement a REST server for low-latency image classification (inference) using NVIDIA GPUs. This is an initial demonstration of the [GRE (GPU REST Engine)](https://developer.nvidia.com/gre) software that will allow you to build your own accelerated microservices.
 
+**This repository is a demo, it is not intended to be a generic solution that can accept any trained model. Code customization will be required for your use cases.**
+
 This demonstration makes use of several technologies with which you may be familiar:
 - [Docker](https://www.docker.com/): for bundling all the dependencies of our program and for easier deployment.
 - [Go](https://golang.org/): for its efficient builtin HTTP server.
